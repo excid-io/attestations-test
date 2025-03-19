@@ -20,25 +20,41 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
 
-    - name: Semgrep scan # https://semgrep.dev/docs/semgrep-ci/sample-ci-configs#sample-github-actions-configuration-file
-      container:
-        image: semgrep/semgrep
-        options: -v ${{ github.workspace }}:/app
-        run: |
-          sempgrep ci
+  semgrep:
+    needs: sast
+    permissions:
+      contents: read
+    
+    runs-on: ubuntu-latest
+    container:
+      # A Docker image with Semgrep installed. Do not change this.
+      image: semgrep/semgrep
 
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+  
+    - name: Semgrep
+      run: semgrep ci
 
   test:
-    needs: sast
+    needs: semgrep
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+
     - name: Test
       run: npm test
 
 
   build-image:
     needs: test
+
+    runs-on: ubuntu-latest
+
 
     permissions:
       contents: write
