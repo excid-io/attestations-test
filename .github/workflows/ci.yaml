@@ -1,0 +1,82 @@
+name: Build Images
+
+on:
+  workflow_dispatch: {}
+  push: 
+    branches: ["main"]
+
+
+jobs:
+
+  sast:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+
+    - name: Gitleaks scan
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+
+    - name: Semgrep scan # https://semgrep.dev/docs/semgrep-ci/sample-ci-configs#sample-github-actions-configuration-file
+      container:
+        image: semgrep/semgrep
+        options: -v ${{ github.workspace }}:/app
+        run: |
+          sempgrep ci
+
+
+  test:
+    needs: sast
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test
+      run: npm test
+
+
+  build-image:
+    needs: test
+
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      attestations: write
+
+    steps:
+    
+    - name: Extract Docker image metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ vars.DOCKER_USERNAME }}/my-image
+
+    - name: Log into registry ghcr.io
+      uses: docker/login-action@v3.3.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        logout: false
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        tags: ${{ steps.meta.outputs.tags }}
+        annotations: ${{ steps.meta.outputs.annotations }}
+        push: true
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    
+
+
+
+
+
+
+

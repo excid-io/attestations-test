@@ -1,0 +1,23 @@
+{
+  "name": "github-attestations-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node src/index.js",
+    "test": "echo Testing..."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/excid-io/attestations-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/excid-io/attestations-test/issues"
+  },
+  "homepage": "https://github.com/excid-io/attestations-test#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
