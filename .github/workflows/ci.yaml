@@ -93,7 +93,7 @@ jobs:
       uses: docker/build-push-action@v6.15.0
       id: build-and-push
       with:
-        tags: ${{ steps.meta.outputs.tags }}, ${{ env.REGISTRY }}/${{ github.repository }}:latest
+        tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest
         annotations: ${{ steps.meta.outputs.annotations }}
         push: true
         labels: ${{ steps.meta.outputs.labels }}
@@ -102,7 +102,7 @@ jobs:
         # provenance: true
         # sbom: true
 
-    - name: Attest
+    - name: Attest Provenance
       uses: actions/attest-build-provenance@v2.2.3
       id: attest-provenance
       with:
@@ -113,11 +113,11 @@ jobs:
     - name: Generate SBOM
       uses: anchore/sbom-action@v0
       with:
-        image: ${{ env.REGISTRY }}/${{ github.repository }}
+        image: ${{ env.REGISTRY }}/${{ github.repository }}:latest
         format: 'cyclonedx-json'
         output-file: 'sbom.cyclonedx.json'
 
-    - name: Attest
+    - name: Attest SBOM
       uses: actions/attest-sbom@v2
       id: attest-sbom
       with:
