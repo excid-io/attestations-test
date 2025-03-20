@@ -1,4 +1,4 @@
-name: Build Images
+name: Attest container image with Docker
 
 on:
   workflow_dispatch: {}

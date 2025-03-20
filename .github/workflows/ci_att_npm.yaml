@@ -1,4 +1,4 @@
-name: Build Images
+name: Attest package with npm
 
 on:
   workflow_dispatch: {}
