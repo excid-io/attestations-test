@@ -105,6 +105,7 @@ jobs:
 
 
   verify-attestations:
+    needs: generate-attestations
     runs-on: ubuntu-latest
 
     permissions:
