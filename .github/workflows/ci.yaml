@@ -96,7 +96,7 @@ jobs:
       uses: docker/build-push-action@v6.15.0
       id: build-and-push
       with:
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: ${{ steps.meta.outputs.tags }}, ${{ env.REGISTRY }}/${{ github.repository }}:latest
         annotations: ${{ steps.meta.outputs.annotations }}
         push: true
         labels: ${{ steps.meta.outputs.labels }}
