@@ -127,3 +127,5 @@ jobs:
     - name: Verify attestations
       run: |
         gh attestation verify oci://${{ env.REGISTRY }}/${{ github.repository }}:latest --owner excid-io
+      env:
+        GH_TOKEN: ${{ github.token }}
