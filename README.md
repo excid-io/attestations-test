@@ -1,8 +1,9 @@
 ## Artifact Attestations with GitHub Actions
 
-A repo to test how attestations work in GitHub Actions. We created a very simple (Hello World) express-js server in NodeJS which we containerize and attest. 
+A repo to test how attestations work in GitHub Actions. We created a very simple (Hello World) express-js server in NodeJS which we containerize and attest. For each case we present a different workflow file under .github/workflows.
 
 We are mostly interested in attesting container images, not files.
+
 
 Attestations of our interest are:
 1. SLSA Provenance
@@ -35,6 +36,8 @@ In GitHub Actions this is done with the docker/build-push-action:
     provenance: true
     sbom: true
 ```
+
+These documents are stored in the OCI Registry along with the image.
 
 ### 2. GitHub Actions native action
 
@@ -74,3 +77,15 @@ Similarly, we can generate the SBOM and attest it:
 ```
 
 The actions above will upload the two attestations in the GitHub Attestations Registry which is accessible via its API. Later on, they can be verified.
+
+Preferably, we would use this method to create attestations. It is an objective way of generating provenance and SBOM attestations, since we offload the process to a specific action, which is not technology- or implementation-dependent and is interoperable.
+
+### 3. Package manager specific options (npm)
+
+Since we have a NodeJS project here, we can see what capabilities the relevant technology stack provides us with. With `npm`, we can now create provenance attestations when publishing a package:
+
+```sh
+npm publish --provenance --access public
+```
+
+This will package our code and upload it to the npm registry as known, and will create the provenance attestation too.
