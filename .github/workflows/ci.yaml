@@ -59,14 +59,13 @@ jobs:
 
   build-image:
     needs: test
-
     runs-on: ubuntu-latest
+    outputs:  #declare image digest as output, to feed it to next job
+      container_image_digest: ${{ steps.build-and-push.outputs.digest }}
 
     permissions:
       contents: write
       packages: write
-      id-token: write
-      attestations: write
 
     steps:
     - name: Checkout repository
@@ -102,12 +101,26 @@ jobs:
         # provenance: true
         # sbom: true
 
+  generate-attestations:
+    needs: build-image
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+
     - name: Attest Provenance
       uses: actions/attest-build-provenance@v2.2.3
       id: attest-provenance
       with:
         subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
-        subject-digest: ${{ steps.build-and-push.outputs.digest }}
+        subject-digest: ${{ needs.build-image.outputs.container_image_digest }}
         push-to-registry: true
   
     - name: Generate SBOM
@@ -122,7 +135,7 @@ jobs:
       id: attest-sbom
       with:
         subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
-        subject-digest: ${{ steps.build-and-push.outputs.digest }}
+        subject-digest: ${{ needs.build-image.outputs.container_image_digest }}
         sbom-path: 'sbom.cyclonedx.json'
         push-to-registry: true
 
