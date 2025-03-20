@@ -82,7 +82,7 @@ Preferably, we would use this method to create attestations. It is an objective 
 
 ### 3. Package manager specific options (npm)
 
-Since we have a NodeJS project here, we can see what capabilities the relevant technology stack provides us with. With `npm`, we can now create provenance attestations when publishing a package:
+Since we have a NodeJS project here, we can see what capabilities the relevant technology stack provides us with. With `npm`, we can now create provenance attestations when [publishing](https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions) a package:
 
 ```sh
 npm publish --provenance --access public
