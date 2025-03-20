@@ -57,8 +57,7 @@ jobs:
     
     - name: a
       run: |
-        echo $container_image_digest
-        echo ${{ steps.meta.outputs.tags }}
+        echo ${{ steps.build-and-push.outputs.digest }}
 
 
   generate-attestations:
@@ -85,7 +84,6 @@ jobs:
 
     - name: a
       run: |
-        echo $container_image_digest
         echo ${{ needs.build-image.outputs.container_image_digest }}
 
 
