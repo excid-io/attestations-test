@@ -89,6 +89,9 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ github.repository }}
 
+    - name: a
+      run: echo ${{ steps.meta.outputs.tags }}
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v6.15.0
       id: build-and-push
