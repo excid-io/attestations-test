@@ -80,6 +80,12 @@ The actions above will upload the two attestations in the GitHub Attestations Re
 
 Preferably, we would use this method to create attestations. It is an objective way of generating provenance and SBOM attestations, since we offload the process to a specific action, which is not technology- or implementation-dependent and is interoperable.
 
+We can also verify the attestations using the `gh` cli tool:
+
+```sh
+gh attestation verify oci://IMAGE_URI:TAG --owner ORG_NAME
+```
+
 ### 3. Package manager specific options (npm)
 
 Since we have a NodeJS project here, we can see what capabilities the relevant technology stack provides us with. With `npm`, we can now create provenance attestations when [publishing](https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions) a package:
