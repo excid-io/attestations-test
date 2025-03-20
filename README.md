@@ -39,7 +39,7 @@ In GitHub Actions this is done with the docker/build-push-action:
 
 These documents are stored in the OCI Registry along with the image.
 
-### 2. GitHub Actions native action
+### 2. GitHub Actions native actions
 
 We can leverage premade GitHub Actions from the Marketplace to generate our attestations. There are two **official** actions for this:
 1. [actions/attest-build-provenance](https://github.com/marketplace/actions/attest-build-provenance)
