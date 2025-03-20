@@ -88,6 +88,12 @@ Since we have a NodeJS project here, we can see what capabilities the relevant t
 npm publish --provenance --access public
 ```
 
-This will package our code and upload it to the npm registry as known, and will create the provenance attestation too.
+This will package our code and upload it to the npm registry as known, and will create the provenance attestation too. In order for npm to create the provenance, this command **must** run within a CI environment such as GitHub Actions or GitLab CI.
+The signature can be verified by running 
 
+```sh
+npm audit signatures
+```
+
+The command above will scan the packages for invalid/outdated signatures.
 
