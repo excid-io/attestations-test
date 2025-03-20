@@ -54,6 +54,12 @@ jobs:
         cache-to: type=gha,mode=max
         # provenance: true
         # sbom: true
+    
+    - name: a
+      run: |
+        echo $container_image_digest
+        echo ${{ steps.meta.outputs.tags }}
+
 
   generate-attestations:
     needs: build-image
@@ -76,6 +82,12 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         logout: false
+
+    - name: a
+      run: |
+        echo $container_image_digest
+        echo ${{ needs.build-image.outputs.container_image_digest }}
+
 
     - name: Attest Provenance
       uses: actions/attest-build-provenance@v2.2.3
