@@ -15,7 +15,7 @@ jobs:
   build:
     uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v2.1.0
     with:
-      run-scripts: "test"
+      run-scripts: "ci, test"
 
     permissions:
       id-token: write 
@@ -50,6 +50,9 @@ jobs:
       - name: test
         run: |
           ls -la
+          tar -xvf github-attestations-test-1.0.0.tgz
+          ls -la package
+
       - name: Publish the package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
