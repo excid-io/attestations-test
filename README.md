@@ -103,3 +103,44 @@ npm audit signatures
 
 The command above will scan the packages for invalid/outdated signatures.
 
+### 4. SLSA GitHub Generator
+
+SLSA provides us with a tool (the [SLSA Generator](https://github.com/slsa-framework/slsa-github-generator)) which generates provenance attestations for us. In this project, they provide us with multiple builders, one for each programming language, to build and attest the provenance of our code.
+
+For us, the [NodeJS builder](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/nodejs/README.md) is the proper one to use, to package and attest our code.
+
+In our workflow we need to define one `build` job which inherits a reusable workflow from the `slsa-github-generator` repo, and a `publish` step which publishes the package to nmpjs. As the [NodeJS builder](https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/nodejs/README.md) builder documentation states, we need the following lines in our workflow:
+
+```yaml
+jobs:
+  build:
+    permissions:
+      id-token: write # For signing
+      contents: read # For repo checkout.
+      actions: read # For getting workflow run info.
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_nodejs_slsa3.yml@v2.1.0
+    with:
+      run-scripts: "ci, test, build"
+```
+
+We define which npm scripts we want to run (based on our package.json), and SLSA's reusable workflow will do it for us. When these are run, the builder packs the code into a tarball and the provenance. These are also uploaded as job artifacts in the summary after the job is finished.
+
+Then, we `publish` the package to npmjs with the following yaml code:
+
+```yaml
+- name: publish
+      id: publish
+      uses: slsa-framework/slsa-github-generator/actions/nodejs/publish@v2.1.0
+      with:
+        access: public
+        node-auth-token: ${{ secrets.NPM_TOKEN }}
+        package-name: ${{ needs.build.outputs.package-name }}
+        package-download-name: ${{ needs.build.outputs.package-download-name }}
+        package-download-sha256: ${{ needs.build.outputs.package-download-sha256 }}
+        provenance-name: ${{ needs.build.outputs.provenance-name }}
+        provenance-download-name: ${{ needs.build.outputs.provenance-download-name }}
+        provenance-download-sha256: ${{ needs.build.outputs.provenance-download-sha256 }}
+```
+
+When we want to install the package with `npm install pkg_name` we can run `npm audit signatures` to verify its signature.

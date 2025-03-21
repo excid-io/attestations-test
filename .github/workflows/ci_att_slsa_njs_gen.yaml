@@ -1,4 +1,4 @@
-name: Attest SLSA NodeJS Generator
+name: Attest with NodeJS SLSA Generator
 
 on:
   workflow_dispatch: {}
