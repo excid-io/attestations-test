@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "run": "node src/index.js",
-    "test": "echo Testing..."
+    "ci": "npm ci",
+    "test": "echo Testing...",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -20,5 +22,8 @@
   "dependencies": {
     "express": "^4.21.2",
     "github-attestations-test22": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
   }
 }
