@@ -27,37 +27,22 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3.7.0
-        with:
-          node-version: 18
-          registry-url: "https://registry.npmjs.org"
+    - name: Set up Node registry authentication
+      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
+      with:
+        node-version: 18
+        registry-url: "https://registry.npmjs.org"
 
-      - name: Download tarball
-        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-package-download@v2.1.0
-        with:
-          name: ${{ needs.build.outputs.package-download-name }}
-          path: ${{ needs.build.outputs.package-name }}
-          sha256: ${{ needs.build.outputs.package-download-sha256 }}
-
-      - name: Download provenance
-        uses: slsa-framework/slsa-github-generator/actions/nodejs/secure-attestations-download@v2.1.0
-        with:
-          name: ${{ needs.build.outputs.provenance-download-name }}
-          path: "attestations"
-          sha256: ${{ needs.build.outputs.provenance-download-sha256 }}
-
-      - name: test
-        run: |
-          ls -la
-          tar -xvf github-attestations-test-1.0.0.tgz
-          ls -la package
-
-      - name: Publish the package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          TARBALL_PATH: "${{ needs.build.outputs.package-name }}"
-          PROVENANCE_PATH: "./attestations/${{ needs.build.outputs.provenance-name }}"
-        run: |
-          npm publish "${TARBALL_PATH}" --access=public --provenance-file="${PROVENANCE_PATH}"
+    - name: publish
+      id: publish
+      uses: slsa-framework/slsa-github-generator/actions/nodejs/publish@v2.1.0
+      with:
+        access: public
+        node-auth-token: ${{ secrets.NPM_TOKEN }}
+        package-name: ${{ needs.build.outputs.package-name }}
+        package-download-name: ${{ needs.build.outputs.package-download-name }}
+        package-download-sha256: ${{ needs.build.outputs.package-download-sha256 }}
+        provenance-name: ${{ needs.build.outputs.provenance-name }}
+        provenance-download-name: ${{ needs.build.outputs.provenance-download-name }}
+        provenance-download-sha256: ${{ needs.build.outputs.provenance-download-sha256 }}
 
