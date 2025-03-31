@@ -1,0 +1,39 @@
+name: Attest package with npm
+
+on:
+  workflow_dispatch: {}
+  # push: 
+  #   branches: ["main"]
+
+env:
+  # Use ghcr.io to store container images
+  REGISTRY: ghcr.io
+
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4.3.0
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Preprocess package  #only package src folder and package*.json files
+        run: |
+          mkdir dist
+          cp -r src dist
+          cp package* dist
+      
+      - name: Publish package with provenance
+        run: | 
+          cd dist
+          npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
