@@ -23,6 +23,11 @@ allow if {
     container_image == official_image
 
 	# Find the express component
-    
-
+    # Find the express component
+    some i
+    statement.predicate.components[i].name == "express"
+    version := statement.predicate.components[i].version
+    parts := split(version, ".")
+    major_version := to_number(parts[0])
+    major_version >= 4
 }
